@@ -1,0 +1,42 @@
+{
+    "name": "n8n-nodes-smstools",
+    "version": "0.1.0",
+    "description": "n8n community node for Smstools (SMS gateway)",
+    "license": "MIT",
+    "keywords": ["n8n-community-node-package", "n8n", "smstools", "sms", "gateway"],
+    "author": { "name": "info@smstools.be", "email": "info@smstools.be" },
+    "repository": { "type": "git", "url": "https://github.com/Smstools-api/n8n-nodes-smstools.git" },
+    "files": ["dist"],
+    "n8n": {
+        "n8nNodesApiVersion": 1,
+        "strict": true,
+        "credentials": ["dist/credentials/SmstoolsApi.credentials.js"],
+        "nodes": ["dist/nodes/Smstools/Smstools.node.js"]
+    },
+    "scripts": {
+        "build": "n8n-node build",
+        "build:watch": "tsc --watch",
+        "dev": "n8n-node dev",
+        "lint": "n8n-node lint",
+        "lint:fix": "n8n-node lint --fix",
+        "release": "n8n-node release",
+        "prepublishOnly": "n8n-node prerelease"
+    },
+    "devDependencies": {
+        "@n8n/node-cli": "*",
+        "eslint": "9.32.0",
+        "prettier": "3.6.2",
+        "release-it": "^19.0.4",
+        "typescript": "5.9.2",
+        "n8n-core": "*",
+        "n8n-workflow": "*",
+        "@types/node": "^20.0.0"
+    },
+    "peerDependencies": {
+        "n8n-workflow": ">=1.0.0",
+        "n8n-core": ">=1.0.0"
+    },
+    "overrides": {
+        "change-case": "4.1.2"
+    }
+}
