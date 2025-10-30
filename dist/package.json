@@ -1,6 +1,6 @@
 {
     "name": "n8n-nodes-smstools",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "n8n community node for Smstools (SMS gateway)",
     "license": "MIT",
     "keywords": ["n8n-community-node-package", "n8n", "smstools", "sms", "gateway"],
@@ -20,7 +20,7 @@
         "lint": "n8n-node lint",
         "lint:fix": "n8n-node lint --fix",
         "release": "n8n-node release",
-        "prepublishOnly": "n8n-node prerelease"
+        "prepublishOnly": "npm run build"
     },
     "devDependencies": {
         "@n8n/node-cli": "*",
