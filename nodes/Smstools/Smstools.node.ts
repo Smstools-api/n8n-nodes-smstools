@@ -206,7 +206,7 @@ export class Smstools implements INodeType {
             gender
           };
 
-          const res = await smstoolsRequest.call(this, 'POST', '/v1/voice/send', body);
+          const res = await smstoolsRequest.call(this, 'POST', '/v1/message/send', body);
           returnData.push(...asItems(res));
         }
       }
