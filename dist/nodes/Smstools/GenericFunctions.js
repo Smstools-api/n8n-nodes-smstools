@@ -5,23 +5,20 @@ exports.asItems = asItems;
 const n8n_workflow_1 = require("n8n-workflow");
 async function smstoolsRequest(method, endpoint, body = {}, qs = {}) {
     const credentials = await this.getCredentials('smstoolsApi');
-    const baseUrl = credentials.baseUrl.replace(/\/$/, '');
-    const clientId = credentials.clientId;
-    const clientSecret = credentials.clientSecret;
-    if ((method || '').toUpperCase() === 'GET') {
-        qs.client_id = clientId;
-        qs.client_secret = clientSecret;
-    }
+    const baseUrl = String(credentials.baseUrl || '').replace(/\/$/, '');
+    const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     const options = {
         method: method,
-        url: `${baseUrl}${endpoint}`,
+        url: `${baseUrl}${path}`,
         qs,
         body,
-        headers: { 'Content-Type': 'application/json', 'X-Client-Id': clientId, 'X-Client-Secret': clientSecret },
         json: true,
     };
+    if ((method || '').toUpperCase() === 'GET') {
+        delete options.body;
+    }
     try {
-        return await this.helpers.httpRequest(options);
+        return await this.helpers.httpRequestWithAuthentication.call(this, 'smstoolsApi', options);
     }
     catch (error) {
         throw new n8n_workflow_1.NodeApiError(this.getNode(), error);

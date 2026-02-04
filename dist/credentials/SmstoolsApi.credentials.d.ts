@@ -4,6 +4,12 @@ export declare class SmstoolsApi implements ICredentialType {
     displayName: string;
     documentationUrl: string;
     properties: INodeProperties[];
+    requestDefaults: {
+        baseURL: string;
+        headers: {
+            'Content-Type': string;
+        };
+    };
     authenticate: IAuthenticateGeneric;
     test: ICredentialTestRequest;
 }

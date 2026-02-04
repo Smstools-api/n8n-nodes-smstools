@@ -1,10 +1,5 @@
-import {
-  IDataObject,
-  INodeExecutionData,
-  NodeApiError,
-  IHttpRequestOptions,
-} from 'n8n-workflow';
-
+import type { IDataObject, INodeExecutionData, IHttpRequestOptions } from 'n8n-workflow';
+import { NodeApiError } from 'n8n-workflow';
 
 export async function smstoolsRequest(
   this: any,
@@ -14,27 +9,23 @@ export async function smstoolsRequest(
   qs: IDataObject = {},
 ) {
   const credentials = await this.getCredentials('smstoolsApi');
-  const baseUrl = (credentials.baseUrl as string).replace(/\/$/, '');
-  const clientId = credentials.clientId as string;
-  const clientSecret = credentials.clientSecret as string;
-
-  // Altijd credentials meesturen (v1)
-  if ((method || '').toUpperCase() === 'GET') {
-    qs.client_id = clientId;
-    qs.client_secret = clientSecret;
-  }
+  const baseUrl = String(credentials.baseUrl || '').replace(/\/$/, '');
+  const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 
   const options: IHttpRequestOptions = {
     method: method as IHttpRequestOptions['method'],
-    url: `${baseUrl}${endpoint}`,
+    url: `${baseUrl}${path}`,
     qs,
     body,
-    headers: { 'Content-Type': 'application/json', 'X-Client-Id': clientId, 'X-Client-Secret': clientSecret },
     json: true,
   };
 
+  if ((method || '').toUpperCase() === 'GET') {
+    delete (options as any).body;
+  }
+
   try {
-    return await this.helpers.httpRequest(options);
+    return await this.helpers.httpRequestWithAuthentication.call(this, 'smstoolsApi', options);
   } catch (error) {
     throw new NodeApiError(this.getNode(), error);
   }

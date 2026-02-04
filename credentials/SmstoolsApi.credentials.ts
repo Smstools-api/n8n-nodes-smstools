@@ -32,20 +32,25 @@ export class SmstoolsApi implements ICredentialType {
 			displayName: 'Base URL',
 			name: 'baseUrl',
 			type: 'string',
-			default: 'https://api.smsgatewayapi.com',
+			default: 'https://api.smstools.com',
 			description: 'Base URL for Smstools API (change only for private gateway).',
 		},
 	];
+
+	requestDefaults = {
+		baseURL: '={{$credentials.baseUrl}}',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	};
 
 	authenticate: IAuthenticateGeneric = {
 		type: 'generic',
 		properties: {
 			headers: {
-				'Content-Type': 'application/json',
-				'X-Client-Id' : '={{$credentials.clientId}}',
-				'X-Client-Secret' : '={{$credentials.clientSecret}}',
+				'X-Client-Id': '={{$credentials.clientId}}',
+				'X-Client-Secret': '={{$credentials.clientSecret}}',
 			},
-			body: {},
 		},
 	};
 
@@ -54,11 +59,6 @@ export class SmstoolsApi implements ICredentialType {
 			method: 'GET',
 			baseURL: '={{$credentials.baseUrl}}',
 			url: '/v1/auth',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-Client-Id' : '={{$credentials.clientId}}',
-				'X-Client-Secret' : '={{$credentials.clientSecret}}',
-			},
 		},
 	};
 }

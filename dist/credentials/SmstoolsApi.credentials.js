@@ -28,19 +28,23 @@ class SmstoolsApi {
                 displayName: 'Base URL',
                 name: 'baseUrl',
                 type: 'string',
-                default: 'https://api.smsgatewayapi.com',
+                default: 'https://api.smstools.com',
                 description: 'Base URL for Smstools API (change only for private gateway).',
             },
         ];
+        this.requestDefaults = {
+            baseURL: '={{$credentials.baseUrl}}',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
         this.authenticate = {
             type: 'generic',
             properties: {
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-Client-Id': '={{$credentials.clientId}}',
                     'X-Client-Secret': '={{$credentials.clientSecret}}',
                 },
-                body: {},
             },
         };
         this.test = {
@@ -48,11 +52,6 @@ class SmstoolsApi {
                 method: 'GET',
                 baseURL: '={{$credentials.baseUrl}}',
                 url: '/v1/auth',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Client-Id': '={{$credentials.clientId}}',
-                    'X-Client-Secret': '={{$credentials.clientSecret}}',
-                },
             },
         };
     }
