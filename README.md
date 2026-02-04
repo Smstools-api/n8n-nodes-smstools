@@ -93,6 +93,8 @@ The API will convert your text to speech and call the recipient.
 | Version | Date     | Notes |
 |----------|----------|-------|
 | **0.1.0** | 2025-10 | Initial community release with v1 API support for message, voice, account, and tools resources. |
+| **0.1.1** | 2025-10 | Update readme.md |
+| **0.1.2** | 2026-02 | Fix n8n review issues (peer deps, auth, pairedItem, continueOnFail, icons) |
 
 ---
 
