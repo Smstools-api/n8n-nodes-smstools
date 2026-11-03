@@ -8,9 +8,10 @@ class Smstools {
         this.description = {
             displayName: 'Smstools',
             name: 'smstools',
-            icon: 'file:smstools.svg',
+            icon: { light: 'file:smstools.svg', dark: 'file:smstools.dark.svg' },
             group: ['transform'],
             version: 1,
+            subtitle: '={{$parameter["resource"]}}',
             usableAsTool: true,
             description: 'Send sms or voice messages with the Smstools API',
             defaults: { name: 'Smstools' },
@@ -26,7 +27,7 @@ class Smstools {
                     options: [
                         { name: 'Message', value: 'message' },
                         { name: 'Account', value: 'account' },
-                        { name: 'Tools', value: 'tools' },
+                        { name: 'Tool', value: 'tools' },
                     ],
                     default: 'message',
                 },
@@ -34,10 +35,11 @@ class Smstools {
                     displayName: 'Operation',
                     name: 'operation',
                     type: 'options',
+                    noDataExpression: true,
                     displayOptions: { show: { resource: ['message'] } },
                     options: [
-                        { name: 'Send message', value: 'send' },
-                        { name: 'Send voice message', value: 'send-voice' },
+                        { name: 'Send Message', value: 'send', action: 'Send a message' },
+                        { name: 'Send Voice Message', value: 'send-voice', action: 'Send a voice message' },
                     ],
                     default: 'send',
                 },
@@ -82,21 +84,21 @@ class Smstools {
                             type: 'string',
                             hint: 'yyyy-MM-DD HH:mm',
                             default: '',
-                            description: 'Format: yyyy-MM-dd HH:mm. If not provided, the message will be sent as soon as possible',
+                            description: 'Format: yyyy-MM-dd HH:mm. If not provided, the message will be sent as soon as possible.',
                         },
                         {
                             displayName: 'Reference',
                             name: 'reference',
                             type: 'string',
                             default: '',
-                            description: 'String of max. 255 characters',
+                            description: 'String of max. 255 characters.',
                         },
                         {
                             displayName: 'Test',
                             name: 'test',
                             type: 'boolean',
                             default: false,
-                            description: 'Test method without sending',
+                            description: 'Whether to validate the request without sending the message',
                         },
                     ],
                 },
@@ -110,7 +112,6 @@ class Smstools {
                         { name: 'French', value: 'fr' },
                         { name: 'German', value: 'de' },
                     ],
-                    required: false,
                     default: 'en',
                     displayOptions: { show: { resource: ['message'], operation: ['send-voice'] } },
                     description: 'Possible languages: en (default), nl, fr or de',
@@ -123,10 +124,9 @@ class Smstools {
                         { name: 'Female', value: 'Female' },
                         { name: 'Male', value: 'Male' },
                     ],
-                    required: false,
                     default: 'Female',
                     displayOptions: { show: { resource: ['message'], operation: ['send-voice'] } },
-                    description: 'possible genders: "Female" (default), "Male"',
+                    description: 'Possible genders: "Female" (default), "Male"',
                 },
                 {
                     displayName: 'Operation',
@@ -136,7 +136,7 @@ class Smstools {
                     options: [
                         { name: 'Auth Info', value: 'auth' },
                         { name: 'Get Balance', value: 'balance' },
-                        { name: 'Get Sender Ids', value: 'senderids' },
+                        { name: 'Get Sender IDs', value: 'senderids' },
                     ],
                     default: 'auth',
                 },
@@ -251,7 +251,10 @@ class Smstools {
                     });
                     continue;
                 }
-                throw error;
+                if (error instanceof n8n_workflow_1.NodeApiError) {
+                    throw new n8n_workflow_1.NodeApiError(this.getNode(), error, { itemIndex: i });
+                }
+                throw new n8n_workflow_1.NodeOperationError(this.getNode(), error, { itemIndex: i });
             }
         }
         return [returnData];

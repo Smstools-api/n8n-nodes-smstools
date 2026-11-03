@@ -1,0 +1,62 @@
+# Publishes n8n-nodes-smstools to npm with a provenance statement when a version tag is pushed.
+# n8n requires this for verified community nodes since 1 May 2026 (based on the n8n-node CLI template).
+#
+# One-time setup (npm Trusted Publishing, no token in this repo):
+#   npmjs.com -> n8n-nodes-smstools -> Settings -> Trusted Publisher -> GitHub Actions
+#   Organization or user: Smstools-api, Repository: n8n-nodes-smstools, Workflow filename: publish.yml
+#
+# Release: bump "version" in package.json + CHANGELOG.md, commit and push to main, then
+#   git tag v0.1.4 && git push origin v0.1.4
+# The tag must match the version in package.json.
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+      - '*.*.*'
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+
+    permissions:
+      # OIDC token for npm Trusted Publishing and the provenance attestation
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - name: Update npm (Trusted Publishing needs npm 11.5.1 or newer)
+        run: npm install -g npm@^11.5.1
+
+      - name: Check that the tag matches package.json
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$version" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package.json version $version" >&2
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Release
+        # n8n-node release detects GitHub Actions: lint, build, then npm publish with provenance.
+        # NPM_TOKEN is only a fallback; leave it unset when Trusted Publishing is configured.
+        run: |
+          [ -n "$NPM_TOKEN" ] && npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+          npm run release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

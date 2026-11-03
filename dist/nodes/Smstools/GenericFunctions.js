@@ -18,11 +18,10 @@ async function smstoolsRequest(method, endpoint, body = {}, qs = {}) {
         method: method,
         url: `${baseUrl}${path}`,
         qs,
-        body,
         json: true,
     };
-    if ((method || '').toUpperCase() === 'GET') {
-        delete options.body;
+    if ((method || '').toUpperCase() !== 'GET') {
+        options.body = body;
     }
     try {
         return await this.helpers.httpRequestWithAuthentication.call(this, 'smstoolsApi', options);

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.4 (2026-11)
+
+### Changed
+
+- Published from GitHub Actions with an npm provenance statement (required by n8n for verified community nodes).
+- Lint fixes for @n8n/node-cli 0.55: credential and themed node icons, node subtitle, operation actions, title-cased
+  labels ("Send Message", "Get Sender IDs", resource "Tool"), category "Communication", errors wrapped in
+  NodeApiError / NodeOperationError. Parameter values are unchanged, so existing workflows keep working.
+
 ## 0.1.3 (2026-10)
 
 ### Security

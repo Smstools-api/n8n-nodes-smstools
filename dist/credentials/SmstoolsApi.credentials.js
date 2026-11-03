@@ -57,6 +57,10 @@ class SmstoolsApi {
     constructor() {
         this.name = 'smstoolsApi';
         this.displayName = 'Smstools API';
+        this.icon = {
+            light: 'file:../nodes/Smstools/smstools.svg',
+            dark: 'file:../nodes/Smstools/smstools.dark.svg',
+        };
         this.documentationUrl = 'https://www.smstools.be/nl/sms-gateway-api/send_message';
         this.properties = [
             {

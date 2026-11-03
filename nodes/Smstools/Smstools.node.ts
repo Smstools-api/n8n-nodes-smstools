@@ -1,10 +1,12 @@
 import type {
   IDataObject,
+  IExecuteFunctions,
   INodeExecutionData,
   INodeType,
   INodeTypeDescription,
+  JsonObject,
 } from 'n8n-workflow';
-import { NodeConnectionTypes } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
 import { smstoolsRequest, asItems } from './GenericFunctions';
 
@@ -12,9 +14,10 @@ export class Smstools implements INodeType {
   description: INodeTypeDescription = {
     displayName: 'Smstools',
     name: 'smstools',
-    icon: 'file:smstools.svg',
+    icon: { light: 'file:smstools.svg', dark: 'file:smstools.dark.svg' },
     group: ['transform'],
     version: 1,
+    subtitle: '={{$parameter["resource"]}}',
     usableAsTool: true,
     description: 'Send sms or voice messages with the Smstools API',
     defaults: { name: 'Smstools' },
@@ -31,7 +34,7 @@ export class Smstools implements INodeType {
         options: [
           { name: 'Message', value: 'message' },
           { name: 'Account', value: 'account' },
-          { name: 'Tools', value: 'tools' },
+          { name: 'Tool', value: 'tools' },
         ],
         default: 'message',
       },
@@ -41,10 +44,11 @@ export class Smstools implements INodeType {
         displayName: 'Operation',
         name: 'operation',
         type: 'options',
+        noDataExpression: true,
         displayOptions: { show: { resource: ['message'] } },
         options: [
-          { name: 'Send message', value: 'send' },
-          { name: 'Send voice message', value: 'send-voice' },
+          { name: 'Send Message', value: 'send', action: 'Send a message' },
+          { name: 'Send Voice Message', value: 'send-voice', action: 'Send a voice message' },
         ],
         default: 'send',
       },
@@ -92,21 +96,21 @@ export class Smstools implements INodeType {
             hint: 'yyyy-MM-DD HH:mm',
             default: '',
             description:
-              'Format: yyyy-MM-dd HH:mm. If not provided, the message will be sent as soon as possible',
+              'Format: yyyy-MM-dd HH:mm. If not provided, the message will be sent as soon as possible.',
           },
           {
             displayName: 'Reference',
             name: 'reference',
             type: 'string',
             default: '',
-            description: 'String of max. 255 characters',
+            description: 'String of max. 255 characters.',
           },
           {
             displayName: 'Test',
             name: 'test',
             type: 'boolean',
             default: false,
-            description: 'Test method without sending',
+            description: 'Whether to validate the request without sending the message',
           },
         ],
       },
@@ -121,7 +125,6 @@ export class Smstools implements INodeType {
           { name: 'French', value: 'fr' },
           { name: 'German', value: 'de' },
         ],
-        required: false,
         default: 'en',
         displayOptions: { show: { resource: ['message'], operation: ['send-voice'] } },
         description: 'Possible languages: en (default), nl, fr or de',
@@ -134,10 +137,9 @@ export class Smstools implements INodeType {
           { name: 'Female', value: 'Female' },
           { name: 'Male', value: 'Male' },
         ],
-        required: false,
         default: 'Female',
         displayOptions: { show: { resource: ['message'], operation: ['send-voice'] } },
-        description: 'possible genders: "Female" (default), "Male"',
+        description: 'Possible genders: "Female" (default), "Male"',
       },
 
       // ACCOUNT
@@ -149,7 +151,7 @@ export class Smstools implements INodeType {
         options: [
           { name: 'Auth Info', value: 'auth' },
           { name: 'Get Balance', value: 'balance' },
-          { name: 'Get Sender Ids', value: 'senderids' },
+          { name: 'Get Sender IDs', value: 'senderids' },
         ],
         default: 'auth',
       },
@@ -174,7 +176,7 @@ export class Smstools implements INodeType {
     ],
   };
 
-  async execute(this: any): Promise<INodeExecutionData[][]> {
+  async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
     const items = this.getInputData();
     const returnData: INodeExecutionData[] = [];
 
@@ -295,7 +297,11 @@ export class Smstools implements INodeType {
           });
           continue;
         }
-        throw error;
+        // Both constructors return an error of their own class unchanged, so API details are kept
+        if (error instanceof NodeApiError) {
+          throw new NodeApiError(this.getNode(), error as unknown as JsonObject, { itemIndex: i });
+        }
+        throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: i });
       }
     }
 

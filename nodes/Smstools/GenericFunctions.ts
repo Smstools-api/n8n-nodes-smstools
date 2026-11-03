@@ -1,9 +1,15 @@
-import type { IDataObject, INodeExecutionData, IHttpRequestOptions } from 'n8n-workflow';
+import type {
+  IDataObject,
+  IExecuteFunctions,
+  IHttpRequestOptions,
+  INodeExecutionData,
+  JsonObject,
+} from 'n8n-workflow';
 import { NodeApiError, NodeOperationError } from 'n8n-workflow';
 import { getSmstoolsBaseUrl } from '../../credentials/SmstoolsApi.credentials';
 
 export async function smstoolsRequest(
-  this: any,
+  this: IExecuteFunctions,
   method: string,
   endpoint: string,
   body: IDataObject = {},
@@ -24,22 +30,22 @@ export async function smstoolsRequest(
     method: method as IHttpRequestOptions['method'],
     url: `${baseUrl}${path}`,
     qs,
-    body,
     json: true,
   };
 
-  if ((method || '').toUpperCase() === 'GET') {
-    delete (options as any).body;
+  // GET requests are sent without a body
+  if ((method || '').toUpperCase() !== 'GET') {
+    options.body = body;
   }
 
   try {
     return await this.helpers.httpRequestWithAuthentication.call(this, 'smstoolsApi', options);
   } catch (error) {
-    throw new NodeApiError(this.getNode(), error);
+    throw new NodeApiError(this.getNode(), error as JsonObject);
   }
 }
 
-export function asItems(data: any): INodeExecutionData[] {
-  const arr = Array.isArray(data) ? data : [data];
-  return arr.map((d) => ({ json: d }));
+export function asItems(data: unknown): INodeExecutionData[] {
+  const arr: unknown[] = Array.isArray(data) ? data : [data];
+  return arr.map((d) => ({ json: d as IDataObject }));
 }

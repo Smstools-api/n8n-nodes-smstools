@@ -3,6 +3,7 @@ import type {
 	ICredentialTestRequest,
 	ICredentialType,
 	IHttpRequestOptions,
+	Icon,
 	INodeProperties,
 } from 'n8n-workflow';
 
@@ -77,6 +78,10 @@ function assertSmstoolsRequestTarget(requestOptions: IHttpRequestOptions): void 
 export class SmstoolsApi implements ICredentialType {
 	name = 'smstoolsApi';
 	displayName = 'Smstools API';
+	icon: Icon = {
+		light: 'file:../nodes/Smstools/smstools.svg',
+		dark: 'file:../nodes/Smstools/smstools.dark.svg',
+	};
 	documentationUrl = 'https://www.smstools.be/nl/sms-gateway-api/send_message';
 
 	properties: INodeProperties[] = [
