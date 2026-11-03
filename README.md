@@ -35,7 +35,7 @@ These are available in your Smstools account dashboard.
 
 | Field | Description |
 |--------|-------------|
-| **Base URL** | Default: `https://api.smstools.com` (change only for private gateways) |
+| **Base URL** | Default: `https://api.smstools.com`. Only `https://api.smstools.com` and `https://api.smsgatewayapi.com` are accepted; other hosts and `http://` are refused before any request is sent. |
 | **Client ID** | Your API client ID from Smstools |
 | **Client Secret** | Your API client secret from Smstools |
 
@@ -95,6 +95,7 @@ The API will convert your text to speech and call the recipient.
 | **0.1.0** | 2025-10 | Initial community release with v1 API support for message, voice, account, and tools resources. |
 | **0.1.1** | 2025-10 | Update readme.md |
 | **0.1.2** | 2026-02 | Fix n8n review issues (peer deps, auth, pairedItem, continueOnFail, icons) |
+| **0.1.3** | 2026-10 | Security: Base URL restricted to https and the official Smstools API hosts; the client secret is never sent elsewhere |
 
 ---
 

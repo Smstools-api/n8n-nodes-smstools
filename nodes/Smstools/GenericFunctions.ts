@@ -1,5 +1,6 @@
 import type { IDataObject, INodeExecutionData, IHttpRequestOptions } from 'n8n-workflow';
-import { NodeApiError } from 'n8n-workflow';
+import { NodeApiError, NodeOperationError } from 'n8n-workflow';
+import { getSmstoolsBaseUrl } from '../../credentials/SmstoolsApi.credentials';
 
 export async function smstoolsRequest(
   this: any,
@@ -9,7 +10,14 @@ export async function smstoolsRequest(
   qs: IDataObject = {},
 ) {
   const credentials = await this.getCredentials('smstoolsApi');
-  const baseUrl = String(credentials.baseUrl || '').replace(/\/$/, '');
+
+  // SEC-916: only https to an allowed Smstools host; refuse before any request is sent
+  let baseUrl: string;
+  try {
+    baseUrl = getSmstoolsBaseUrl(credentials.baseUrl);
+  } catch (error) {
+    throw new NodeOperationError(this.getNode(), (error as Error).message);
+  }
   const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 
   const options: IHttpRequestOptions = {

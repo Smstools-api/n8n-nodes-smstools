@@ -1,4 +1,7 @@
-import type { IAuthenticateGeneric, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { ICredentialDataDecryptedObject, ICredentialTestRequest, ICredentialType, IHttpRequestOptions, INodeProperties } from 'n8n-workflow';
+export declare const SMSTOOLS_DEFAULT_BASE_URL = "https://api.smstools.com";
+export declare const SMSTOOLS_ALLOWED_HOSTS: string[];
+export declare function getSmstoolsBaseUrl(value: unknown): string;
 export declare class SmstoolsApi implements ICredentialType {
     name: string;
     displayName: string;
@@ -10,6 +13,6 @@ export declare class SmstoolsApi implements ICredentialType {
             'Content-Type': string;
         };
     };
-    authenticate: IAuthenticateGeneric;
+    authenticate(credentials: ICredentialDataDecryptedObject, requestOptions: IHttpRequestOptions): Promise<IHttpRequestOptions>;
     test: ICredentialTestRequest;
 }

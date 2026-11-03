@@ -1,17 +1,35 @@
 {
   "name": "n8n-nodes-smstools",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "n8n community node for Smstools (SMS gateway)",
   "license": "MIT",
-  "keywords": ["n8n-community-node-package", "n8n", "smstools", "sms", "gateway"],
-  "author": { "name": "info@smstools.be", "email": "info@smstools.be" },
-  "repository": { "type": "git", "url": "https://github.com/Smstools-api/n8n-nodes-smstools.git" },
-  "files": ["dist"],
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "smstools",
+    "sms",
+    "gateway"
+  ],
+  "author": {
+    "name": "info@smstools.be",
+    "email": "info@smstools.be"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Smstools-api/n8n-nodes-smstools.git"
+  },
+  "files": [
+    "dist"
+  ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "strict": true,
-    "credentials": ["dist/credentials/SmstoolsApi.credentials.js"],
-    "nodes": ["dist/nodes/Smstools/Smstools.node.js"]
+    "credentials": [
+      "dist/credentials/SmstoolsApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Smstools/Smstools.node.js"
+    ]
   },
   "scripts": {
     "build": "n8n-node build",
